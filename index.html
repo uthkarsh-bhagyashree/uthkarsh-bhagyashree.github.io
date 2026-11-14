@@ -1195,11 +1195,11 @@ const G3D = (() => {
   let renderer, scene, cScene, camera, lamp, hemi, sun, maxAniso = 4;
   const flames = [], cLights = [], doorLeaves = [], gobos = [];
   let vScene, volU = null, sunDir;
-  const DIM = { W0: 8.4, D0: 5.2, H0: 3.6, dw: 1.4, dh: 2.7, dy: .3 };
+  const DIM = { W0: 8.4, D0: 5.2, H0: 4.6, dw: 1.4, dh: 2.7, dy: .3 };
   const CORR = { W: 4.4, L: 14, H: 3.18, bay: 2, px: 1.35 };   // the pillared corridor (mandapa) beyond the doorway
   const Z0 = -DIM.D0 / 2, ZE = Z0 - CORR.L;
   // camera keyframes: landing (sky, crown peeking) → risen 3/4 view → approach → through the passage → down the corridor
-  const KEY = { L: { p: [4, 3, 22], l: [0, 23.5, 0] }, R: { p: [3.6, 2.0, 17], l: [0, 8.2, 0] }, D1: { p: [1.1, 1.9, 10.5], l: [0, 3, 0] }, D2: { p: [0, 1.8, -1.2], l: [0, 1.75, -12] }, C: { p: [0, 1.72, ZE + 2.6], l: [0, 1.62, ZE - 6] }, P: { p: [0, 1.62, ZE - 1.4], l: [0, 1.6, ZE - 10] } };
+  const KEY = { L: { p: [4, 3, 22], l: [0, 24.6, 0] }, R: { p: [3.8, 2.0, 18.5], l: [0, 8.9, 0] }, D1: { p: [1.1, 1.9, 10.5], l: [0, 3, 0] }, D2: { p: [0, 1.8, -1.2], l: [0, 1.75, -12] }, C: { p: [0, 1.72, ZE + 2.6], l: [0, 1.62, ZE - 6] }, P: { p: [0, 1.62, ZE - 1.4], l: [0, 1.6, ZE - 10] } };
   const svgWrap = (w, h, inner) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${inner}</svg>`;
   const paint = (w, h, fn) => { const c = document.createElement('canvas'); c.width = w; c.height = h; fn(c.getContext('2d'), w, h); return c; };
   const svgCanvas = (str, w, h) => new Promise(res => { const img = new Image(); img.onload = () => res(paint(w, h, g => g.drawImage(img, 0, 0, w, h))); img.onerror = () => res(null); img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str); });
@@ -1266,7 +1266,7 @@ const G3D = (() => {
 
   /* ---------- procedural textures ---------- */
   const graniteC = () => paint(512, 512, (g, w, h) => {
-    const R = rng(17); g.fillStyle = '#c9b99c'; g.fillRect(0, 0, w, h);
+    const R = rng(17); g.fillStyle = '#b9b2a5'; g.fillRect(0, 0, w, h);
     for (let r = 0; r < 8; r++) { const off = (r % 2) * 64; for (let x = -off; x < w; x += 128) { g.fillStyle = `rgba(${R() < .5 ? '255,250,235' : '60,45,30'},${(.03 + R() * .08).toFixed(3)})`; g.fillRect(x, r * 64, 128, 64); g.fillStyle = 'rgba(90,75,55,.55)'; g.fillRect(x, r * 64, 2, 64); } g.fillStyle = 'rgba(90,75,55,.6)'; g.fillRect(0, r * 64, w, 2); }
     for (let i = 0; i < 9000; i++) { g.fillStyle = `rgba(${R() < .5 ? '255,255,255' : '40,30,20'},${(R() * .14).toFixed(3)})`; g.fillRect(R() * w, R() * h, 1.6, 1.6); }
   });
@@ -1285,21 +1285,30 @@ const G3D = (() => {
     g.fillStyle = 'rgba(120,30,60,.16)'; for (let y = 0; y < h; y += 32) g.fillRect(0, y, w, 3);
     [128, 256, 384].forEach(x => { g.fillStyle = '#d9a441'; g.fillRect(x - 10, 0, 20, h); g.fillStyle = '#fff3d0'; g.fillRect(x - 10, 0, 3, h); });
   });
+  // One tier wall, as on a real gopuram: a beaded frieze under the cornice, a moulded base, and a row of
+  // niches separated by pilasters, each holding a painted stucco deity under a carved torana arch.
   function tierFaceSVG(W, H, seed, opening, alt) {
-    const R = rng(seed), o = [], P = GP, sc = H / 100, cx = W / 2;
-    o.push(`<rect width="${W}" height="${H}" fill="${alt ? P.stucco2 : P.stucco}"/>`);
-    const np = Math.max(6, Math.round(W / (H * .42)));
-    for (let k = 1; k < np; k++) { const x = W * k / np; o.push(`<rect x="${f1(x - 3 * sc)}" y="0" width="${f1(6 * sc)}" height="${H}" fill="${hexMix(P.stucco2, '#ffffff', .3)}"/><rect x="${f1(x + 1.5 * sc)}" y="0" width="${f1(1.6 * sc)}" height="${H}" fill="${SHD}"/>`); }
-    o.push(`<rect y="${f1(H - 8 * sc)}" width="${W}" height="${f1(8 * sc)}" fill="${P.red}"/>`);
+    const R = rng(seed), o = [], P = GP, sc = H / 100, cx = W / 2, F = f1, wall = alt ? P.stucco2 : P.stucco;
+    o.push(`<rect width="${W}" height="${H}" fill="${wall}"/>`);
+    o.push(`<rect width="${W}" height="${F(7 * sc)}" fill="${hexMix(wall, P.ochre, .6)}"/><rect y="${F(7 * sc)}" width="${W}" height="${F(1.5 * sc)}" fill="${SHD}"/>`);
+    for (let x = 4.5 * sc; x < W; x += 9 * sc) o.push(`<circle cx="${F(x)}" cy="${F(3.5 * sc)}" r="${F(2.1 * sc)}" fill="${P.red}"/>`);
+    const yb = H - 10 * sc;
+    o.push(`<rect y="${F(yb)}" width="${W}" height="${F(10 * sc)}" fill="${P.red}"/><rect y="${F(yb)}" width="${W}" height="${F(2 * sc)}" fill="${P.ochre}"/><rect y="${F(H - 3 * sc)}" width="${W}" height="${F(3 * sc)}" fill="${hexMix(P.red, '#000000', .25)}"/>`);
     const ow = Math.min(W * .07, 36 * sc), oh = H * .8;
-    if (opening) o.push(`<path d="${archPath(cx, H - 8 * sc, ow + 12 * sc, oh + 8 * sc)}" fill="${P.ochre}"/><path d="${archPath(cx, H - 8 * sc, ow, oh)}" fill="${P.dark}"/><path d="${archPath(cx, H - 8 * sc, ow * .45, oh * .55)}" fill="${hexMix(P.dark, '#d38d33', .4)}"/>`);
-    const sh = H * .84, sp = sh * .4;
-    for (let x = sp / 2; x < W; x += sp) {
-      if (opening && Math.abs(x - cx) < ow / 2 + sp * .45) continue;
-      const Hs = sh * (.8 + R() * .16);
-      if (R() < .4) o.push(`<path d="${archPath(x, H - 8 * sc, sp * .84, Hs * 1.04)}" fill="${hexMix(alt ? P.stucco2 : P.stucco, '#5a3040', .28)}"/>`);
-      statue(o, x, H - 9 * sc, Hs, R, P);
+    const pitch = H * .4, nw = pitch * .8, nh = H * .78;
+    const pilaster = x => o.push(`<rect x="${F(x - 3.4 * sc)}" y="${F(8.5 * sc)}" width="${F(6.8 * sc)}" height="${F(yb - 8.5 * sc)}" fill="${hexMix(wall, '#ffffff', .35)}"/><rect x="${F(x + 1.8 * sc)}" y="${F(8.5 * sc)}" width="${F(1.6 * sc)}" height="${F(yb - 8.5 * sc)}" fill="${SHD}"/><rect x="${F(x - 5 * sc)}" y="${F(8.5 * sc)}" width="${F(10 * sc)}" height="${F(3 * sc)}" fill="${P.ochre}"/><rect x="${F(x - 4.5 * sc)}" y="${F(yb - 4 * sc)}" width="${F(9 * sc)}" height="${F(4 * sc)}" fill="${P.ochre}"/>`);
+    for (let x = 0; x <= W + 1; x += pitch) if (!(opening && Math.abs(x - cx) < ow / 2 + pitch * .5)) pilaster(x);
+    for (let x = pitch / 2; x < W; x += pitch) {
+      if (opening && Math.abs(x - cx) < ow / 2 + pitch * .55) continue;
+      const tc = pick(R, [P.red, P.tealD, P.blue, P.green, P.purple, P.pink]);
+      o.push(`<path d="${archPath(x, yb, nw, nh)}" fill="${hexMix(wall, '#3a2030', .42)}"/>`);   // the niche recess
+      o.push(`<path d="${archPath(x - nw * .06, yb, nw * .88, nh * .97)}" fill="${hexMix(wall, '#3a2030', .55)}"/>`);
+      o.push(`<path d="${archPath(x, yb, nw + 5 * sc, nh + 4 * sc)}" fill="none" stroke="${tc}" stroke-width="${F(3.2 * sc)}"/>`);   // torana
+      o.push(`<path d="${archPath(x, yb, nw + 9 * sc, nh + 7 * sc)}" fill="none" stroke="${P.ochre}" stroke-width="${F(1.4 * sc)}"/>`);
+      o.push(`<circle cx="${F(x)}" cy="${F(yb - nh - 6 * sc)}" r="${F(3.4 * sc)}" fill="${P.ochre}"/><circle cx="${F(x)}" cy="${F(yb - nh - 6 * sc)}" r="${F(1.5 * sc)}" fill="${P.red}"/>`);   // kirtimukha
+      statue(o, x, yb - .5 * sc, nh * (.9 + R() * .06), R, P);
     }
+    if (opening) o.push(`<path d="${archPath(cx, yb, ow + 14 * sc, oh + 9 * sc)}" fill="${P.ochre}"/><path d="${archPath(cx, yb, ow + 6 * sc, oh + 4 * sc)}" fill="${P.red}"/><path d="${archPath(cx, yb, ow, oh)}" fill="${P.dark}"/><path d="${archPath(cx, yb, ow * .45, oh * .55)}" fill="${hexMix(P.dark, '#d38d33', .4)}"/>`);
     return svgWrap(W, H, o.join(''));
   }
   function baySVG(W, H, seed) {
@@ -1643,7 +1652,7 @@ const G3D = (() => {
 
   function build() {
     const D = DIM, gC = weather(graniteC(), 3, .8, false), jobsC = [];
-    const stone = (rx, ry, tint = '#ffffff') => std({ map: tex(gC, rx, ry), color: tint, roughness: .9, bump: .025 });
+    const stone = (rx, ry, tint = '#ffffff') => std({ map: tex(gC, rx, ry), color: hexMix(tint, '#c4c0b8', .55), roughness: .9, bump: .025 });   // grey granite
     const box = (w, h, d, x, y, z, mat) => mesh(new T3.BoxGeometry(w, h, d), mat, x, y, z);
     // courtyard
     const ground = mesh(new T3.PlaneGeometry(400, 400), std({ map: tex(weather(pavingC(), 13, .9, false), 110, 110), roughness: .95, bump: .02 }), 0, 0, 0, false, true);
@@ -1656,7 +1665,14 @@ const G3D = (() => {
     const lintH = D.H0 - (D.dy + D.dh);
     box(D.dw, lintH, D.D0, 0, D.dy + D.dh + lintH / 2, 0, stone(.5, lintH / 2.8, '#b8a88c'));
     box(D.dw, D.dy, D.D0, 0, D.dy / 2, 0, stone(.5, .2, '#a8977a'));
-    [[.15, .6], [.15, .36]].forEach(([h, g], k) => box(D.W0 + g, h, D.D0 + g, 0, h / 2 + k * .15, 0, stone((D.W0 + g) / 2.8, .1, '#ddd0b5')));
+    // adhishthana: the moulded granite plinth (upana, jagati, rounded kumuda, recessed kantha, pattika), broken at the doorway
+    { let yy = 0; const gap = D.dw / 2 + .58;
+      [[.16, .3, '#cfc9bd'], [.2, .24, '#d8d2c6'], [.2, .2, '#e2ddd2', true], [.1, .07, '#a9a397'], [.16, .19, '#d8d2c6'], [.08, .11, '#cfc9bd']].forEach(([h, out, c, round]) => {
+        const m = stone(1, .1, c), W = D.W0 + 2 * out, Dp = D.D0 + 2 * out, seg = W / 2 - gap, cy = yy + h / 2;
+        const bar = (len, x, z, along) => { const g = round ? new T3.CylinderGeometry(h * .55, h * .55, len, 14) : new T3.BoxGeometry(along ? len : out * 2, h, along ? out * 2 : len);
+          if (round) along ? g.rotateZ(Math.PI / 2) : g.rotateX(Math.PI / 2); mesh(g, m, x, cy, z); };
+        [-1, 1].forEach(sd => { bar(seg, sd * (gap + seg / 2), D.D0 / 2, true); bar(seg, sd * (gap + seg / 2), -D.D0 / 2, true); bar(Dp, sd * D.W0 / 2, 0, false); });
+        yy += h; }); }
     box(D.dw + 1.2, .16, .7, 0, .08, D.D0 / 2 + .4, stone(.6, .1, '#ddd0b5'));
     // stepped door frames
     const fz = D.D0 / 2;
@@ -1665,15 +1681,28 @@ const G3D = (() => {
       [-1, 1].forEach(s => box(.18, top - D.dy, p, s * (edge + .09), D.dy + (top - D.dy) / 2, fz + p / 2, m));
       box(2 * (edge + .18), .18, p, 0, top + .09, fz + p / 2, m);
     });
-    box(D.dw + 1.5, .22, .34, 0, D.dy + D.dh + .66, fz + .17, stone(.6, .1, '#cbbd9f'));
     // pilasters, niches and stone guardians
-    const pil = stone(.12, 1.1, '#e3d7bf');
-    [1.45, 2.55, 3.75].forEach(x => [-1, 1].forEach(s => { box(.3, D.H0 - .55, .14, s * x, .3 + (D.H0 - .55) / 2, fz + .07, pil); box(.44, .14, .24, s * x, D.H0 - .2, fz + .1, pil); box(.42, .16, .22, s * x, .38, fz + .1, pil); }));
-    [-1.6, 0, 1.6].forEach(z => [-1, 1].forEach(s => box(.14, D.H0 - .55, .3, s * (D.W0 / 2 + .07), .3 + (D.H0 - .55) / 2, z, pil)));
-    const niches = [], statues = [];
-    [[2.0, .8], [3.15, .86]].forEach(([x, w], k) => [-1, 1].forEach(s => { niches.push(mesh(new T3.PlaneGeometry(w, 2.5), std({ transparent: true, alphaTest: .5, color: '#7a6a50' }), s * x, 1.75, fz + .005, false, true)); statues.push([mesh(new T3.PlaneGeometry(w * .82, w * .82 * 2.6), std({ transparent: true, alphaTest: .5, color: '#a89a80', roughness: .92 }), s * x, .55 + w * .82 * 1.3, fz + .04, true, true), 40 + k * 2 + (s > 0 ? 1 : 0)]); }));
-    const kStone = tex(kuduC('#cdbf9f', '#e6dcc6', '#e9e1cf'), D.W0 / .6, 1);
-    box(D.W0 + .5, .3, D.D0 + .5, 0, D.H0 + .15, 0, std({ map: kStone, roughness: .9 }));
+    // first storey: pilasters with capitals, recessed niches (koshtas) under carved toranas, guardian figures
+    const pil = stone(.12, 1.1, '#e3d7bf'), P1 = .9, H1 = 3.42, kStone = tex(kuduC('#bdb6a8', '#d6d0c4', '#ddd8cd'), D.W0 / .6, 1), kM = std({ map: kStone, roughness: .9 });
+    const pilasterAt = (x, z, y0, y1, w, faceZ) => { const hh = y1 - y0; box(w, hh, .12, x, y0 + hh / 2, z + .06, pil); box(w * 1.6, .1, .2, x, y1 - .05, z + .1, pil); box(w * 1.9, .07, .24, x, y1 - .14, z + .1, pil); box(w * 1.5, .12, .18, x, y0 + .06, z + .09, pil); };
+    [1.42, 2.55, 3.72].forEach(x => [-1, 1].forEach(s => { pilasterAt(s * x, fz, P1, H1, .26); pilasterAt(s * x, -fz - .12, P1, H1, .26); }));
+    [-1.6, 0, 1.6].forEach(z => [-1, 1].forEach(s => box(.14, H1 - P1, .3, s * (D.W0 / 2 + .07), P1 + (H1 - P1) / 2, z, pil)));
+    const niches = [], statues = [], nicheM = std({ color: '#3d3a34', roughness: 1 });
+    const archRing = (rad, hgt, t) => { const sh = new T3.Shape(); sh.moveTo(-rad - t, 0); sh.lineTo(-rad - t, hgt - rad); sh.absarc(0, hgt - rad, rad + t, Math.PI, 0, true); sh.lineTo(rad + t, 0); sh.lineTo(rad, 0); sh.lineTo(rad, hgt - rad); sh.absarc(0, hgt - rad, rad, 0, Math.PI, false); sh.lineTo(-rad, 0); return new T3.ExtrudeGeometry(sh, { depth: .07, bevelEnabled: false }); };
+    const koshta = (x, z, y0, w, hh, k, seed, sz = 1) => {
+      mesh(new T3.PlaneGeometry(w, hh), nicheM, x, y0 + hh / 2, z + .004, false, true);   // the recess
+      [-1, 1].forEach(sd => box(.07, hh, .1, x + sd * (w / 2 + .035), y0 + hh / 2, z + .05, pil));   // framing posts
+      mesh(archRing(w / 2 + .02, w * .7, .06), pil, x, y0 + hh - w * .35, z + .02);   // the torana arch over it
+      box(w * .3, w * .22, .08, x, y0 + hh + w * .42, z + .05, pil);   // its kirtimukha crest
+      statues.push([mesh(new T3.PlaneGeometry(w * .8 * sz, hh * .9 * sz), std({ transparent: true, alphaTest: .5, color: '#9a958b', roughness: .92 }), x, y0 + hh * .45 * sz + .02, z + .04, true, true), seed]);
+    };
+    [[1.98, .72], [3.13, .76]].forEach(([x, w], k) => [-1, 1].forEach(sd => koshta(sd * x, fz, P1 + .12, w, 2.1, k, 40 + k * 2 + (sd > 0 ? 1 : 0))));
+    box(D.W0 + .36, .24, D.D0 + .36, 0, H1 + .12, 0, kM);   // kapota cornice of the first storey
+    // second storey: a lower order of pilasters and small niches with figures
+    const H2a = H1 + .24, H2b = D.H0;
+    [.95, 1.85, 2.75, 3.65].forEach(x => [-1, 1].forEach(sd => pilasterAt(sd * x, fz + .1, H2a, H2b - .02, .16)));
+    [1.4, 2.3, 3.2].forEach((x, k) => [-1, 1].forEach(sd => koshta(sd * x, fz + .1, H2a + .08, .44, .66, k, 60 + k * 2 + (sd > 0 ? 1 : 0))));
+    box(D.W0 + .5, .3, D.D0 + .5, 0, D.H0 + .15, 0, kM);
     // dim warm lamp light inside the passage
     lamp = new T3.PointLight(lin('#ffc27a'), .25, 6, 1.6); lamp.position.set(0, 2.2, -1.6); scene.add(lamp);
     // soft contact shadow where the base storey meets the paving (ambient occlusion the shadow map can't give)
@@ -1688,7 +1717,7 @@ const G3D = (() => {
     let y = D.H0 + .3;
     for (let i = 0; i < 9; i++) {
       const h = 1.08 - .04 * i, wb = 3.4 + 4.2 * Math.pow(1 - i / 9, 1.25), wt = 3.4 + 4.2 * Math.pow(1 - (i + 1) / 9, 1.25);
-      const wallH = h * .74, cH = h * .12, wwt = wb + (wt - wb) * .74, db = wb * .62, dwt = wwt * .62;
+      const wallH = h * .74, cH = h * .12, wwt = wb, db = wb * .62, dwt = db;   // each tala's wall is vertical; the tower tapers by setbacks
       const f = frustum(wb, db, wwt, dwt, y, wallH), alt = i % 2 === 1;
       const mF = std({ color: alt ? GP.stucco2 : GP.stucco }), mS = std({ color: alt ? GP.stucco2 : GP.stucco });
       add(new T3.Mesh(f.front, mF)); add(new T3.Mesh(f.back, mF)); add(new T3.Mesh(f.left, mS)); add(new T3.Mesh(f.right, mS));
@@ -1698,11 +1727,19 @@ const G3D = (() => {
       const bw = Math.max(.9, wwt * .26), bz = (db + dwt) / 4 + .07, bayM = std({ color: GP.stucco2 }), plain = std({ color: GP.stucco2 });
       [1, -1].forEach(s => { const mats = [plain, plain, plain, plain, s > 0 ? bayM : plain, s < 0 ? bayM : plain]; mesh(new T3.BoxGeometry(bw, wallH * .98, .16), mats, 0, y + wallH * .49, s * bz); });
       tierMats.push([bayM, baySVG(600, Math.round(600 * wallH / bw), 300 + i), 600, Math.round(600 * wallH / bw)]);
+      // central bays on the narrow sides too
+      const bwS = Math.max(.7, db * .34), bayS = std({ color: GP.stucco2 });
+      [1, -1].forEach(s => { const mats = [s > 0 ? bayS : plain, s < 0 ? bayS : plain, plain, plain, plain, plain]; mesh(new T3.BoxGeometry(.16, wallH * .98, bwS), mats, s * (wb / 2 + .07), y + wallH * .49, 0); });
+      tierMats.push([bayS, baySVG(600, Math.round(600 * wallH / bwS), 350 + i), 600, Math.round(600 * wallH / bwS)]);
+      // karna: projecting corner blocks, each a little shrine-face with its own niche and deity
+      const kw = Math.min(.62, wallH * .62), karM = std({ color: GP.stucco2 }), kz = db / 2 - kw / 2 + .06, kx = wb / 2 - kw / 2 + .06;
+      [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([sx, sz]) => mesh(new T3.BoxGeometry(kw, wallH * .98, kw), [karM, karM, plain, plain, karM, karM], sx * kx, y + wallH * .49, sz * kz));
+      tierMats.push([karM, tierFaceSVG(256, Math.round(256 * wallH / kw), 400 + i, false, !alt), 256, Math.round(256 * wallH / kw)]);
       // overhanging cornice
       const cw = wwt + .34, cd = dwt + .34, kt = tex(kPaint, cw / .55, 1), kts = tex(kPaint, cd / .55, 1), cm = std({ color: GP.ochre, roughness: .7 });
       mesh(new T3.BoxGeometry(cw, cH, cd), [std({ map: kts }), std({ map: kts }), cm, std({ color: '#8a5e1e' }), std({ map: kt }), std({ map: kt })], 0, y + wallH + cH / 2, 0);
       // parapet of miniature shrines around all four edges
-      const top = y + wallH + cH, sc = .95 - i * .035, pw = cw - .16, pd = cd - .16, R = rng(500 + i);
+      const top = y + wallH + cH, sc = (.95 - i * .035) * 1.05, pw = cw - .16, pd = cd - .16, R = rng(500 + i);
       const place = (x, z, rot, kind) => {
         const len = kind === 'kuta' ? .26 * sc : .42 * sc, bh = .2 * sc, dep = .26 * sc, c = pick(R, GP.roofs);
         shrines.body.push([x, top + bh / 2, z, rot, len, bh, dep, GP.stucco]);
@@ -1719,7 +1756,13 @@ const G3D = (() => {
       list.forEach(([x, y, z, rot, sx, sy, sz, c], k) => { q.setFromAxisAngle(ax, rot); m4.compose(new T3.Vector3(x, y, z), q, new T3.Vector3(sx, sy, sz)); im.setMatrixAt(k, m4); im.setColorAt(k, lin(c)); });
       im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; add(im); };
     const barrelG = new T3.CylinderGeometry(1, 1, 1, 14, 1, false, 0, Math.PI); barrelG.rotateZ(Math.PI / 2);
-    inst(new T3.BoxGeometry(1, 1, 1), shrines.body, std({ color: '#ffffff' }));
+    // each miniature shrine of the hara gets pilastered walls and an arched opening, like the real kutas and shalas
+    const shrineC = paint(128, 128, (g, w, h) => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h); g.fillStyle = '#e9c66a'; g.fillRect(0, 0, w, 12); g.fillStyle = '#c8504a'; g.fillRect(0, h - 14, w, 14);
+      g.fillStyle = '#e6dccb'; g.fillRect(8, 12, 12, h - 26); g.fillRect(w - 20, 12, 12, h - 26);
+      g.fillStyle = '#d9a441'; g.beginPath(); g.moveTo(32, h - 14); g.lineTo(32, 56); g.arc(64, 56, 32, Math.PI, 0); g.lineTo(96, h - 14); g.fill();
+      g.fillStyle = '#3a2418'; g.beginPath(); g.moveTo(42, h - 14); g.lineTo(42, 60); g.arc(64, 60, 22, Math.PI, 0); g.lineTo(86, h - 14); g.fill();
+      g.fillStyle = '#7a4a2a'; g.beginPath(); g.arc(64, 74, 9, 0, 6.283); g.fill(); g.fillRect(57, 80, 14, 34); });
+    inst(new T3.BoxGeometry(1, 1, 1), shrines.body, std({ map: tex(shrineC), color: '#ffffff' }));
     inst(new T3.SphereGeometry(1, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), shrines.dome, std({ color: '#ffffff', roughness: .6 }));
     inst(barrelG, shrines.barrel, std({ color: '#ffffff', roughness: .6 }));
     inst(new T3.ConeGeometry(1, 1, 8), shrines.fin, std({ color: '#ffffff', metalness: .4, roughness: .4 }));
@@ -1747,7 +1790,7 @@ const G3D = (() => {
     const jobs = jobsC.concat(tierMats.map(([m, str, w, h]) => svgCanvas(str, w, h).then(c => { if (c) { m.map = tex(weather(c, w + h, .85)); m.color.set('#ffffff'); bump(m, .03); } })));
     jobs.push(svgCanvas(medallionSVG(), 512, 512).then(c => { if (c) { medM.map = tex(c); medM.needsUpdate = true; } }));
     jobs.push(svgCanvas(nicheSVG(), 200, 520).then(c => { if (c) niches.forEach(n => { n.material.map = tex(c); n.material.color.set('#ffffff'); n.material.needsUpdate = true; }); }));
-    statues.forEach(([m, seed]) => jobs.push(svgCanvas(stoneStatueSVG(seed), 200, 520).then(c => { if (c) { m.material.map = tex(weather(c, seed, .7, false)); m.material.color.set('#bdb097'); bump(m.material, .04); } })));
+    statues.forEach(([m, seed]) => jobs.push(svgCanvas(stoneStatueSVG(seed), 200, 520).then(c => { if (c) { m.material.map = tex(weather(c, seed, .7, false)); m.material.color.set('#9f9789'); bump(m.material, .04); } })));
     jobs.push(svgCanvas(deitySVG(77), 200, 520).then(c => { if (c) { deityM.map = tex(c); deityM.needsUpdate = true; } }));
     return Promise.all(jobs);
   }

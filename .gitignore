@@ -1,0 +1,4 @@
+# personal photos and the dropped photo variant
+*.jpg
+photos/
+index-photos.html

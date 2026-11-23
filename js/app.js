@@ -320,12 +320,8 @@ finRender(0);
 
 /* ================= Scroll plumbing ================= */
 gsap.registerPlugin(ScrollTrigger);
-// resizes are handled by our own listener below, so the on-screen keyboard opening can't rebuild the pinned RSVP and steal focus
-ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
-// phones scroll natively, as the earlier version did: Lenis adds nothing there but a per-frame cost
-const TOUCH = matchMedia('(pointer: coarse)').matches;
 let lenis = null;
-if (window.Lenis && !TOUCH) {
+if (window.Lenis) {
   lenis = new Lenis({ smoothWheel: false, syncTouch: false });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(t => lenis.raf(t * 1000));
@@ -347,7 +343,7 @@ function playHero(dir) {
     onUpdate: () => heroRender(o.p),
     onComplete: () => {
       if (dir > 0) {
-        heroState = 'done'; arrivedAt = performance.now();
+        heroState = 'done';
         cacheTop(); if (lenis) { lenis.start(); lenis.scrollTo(INV_TOP, { immediate: true, force: true }); } else scrollTo(0, INV_TOP); lastY = INV_TOP;
         arrive();
       } else heroState = 'ready';
@@ -376,17 +372,14 @@ addEventListener('keydown', e => {
 });
 // scrolling back above the invitation replays the approach in reverse
 let lastY = 0;
-// on phones, a finger bounce or the address bar reappearing nudges scrollY a few pixels; only a deliberate pull upward rewinds
-let arrivedAt = 0;
-addEventListener('scroll', () => { const y = scrollY; if (heroState === 'done' && performance.now() - arrivedAt > 900 && y < lastY && y < INV_TOP - 48) playHero(-1); lastY = y; }, { passive: true });
+addEventListener('scroll', () => { const y = scrollY; if (heroState === 'done' && y < lastY && y < INV_TOP - 2) playHero(-1); lastY = y; }, { passive: true });
 H.cue && H.cue.addEventListener('click', () => heroState === 'ready' && playHero(1));
 // a down arrow stays on screen until the very end of the invitation
 const nextCue = $('.next-cue'), closingEnd = $('.foot') || $('#closing');
-let atEnd = false, onForm = false;
-new IntersectionObserver(es => es.forEach(e => { onForm = e.isIntersecting; cueState(); }), { threshold: 0.15 }).observe($('#rsvpForm'));
+let atEnd = false;
 new IntersectionObserver(es => es.forEach(e => { atEnd = e.isIntersecting; cueState(); }), { threshold: 0.2 }).observe(closingEnd);
 const topCue = $('.top-cue');
-function cueState() { nextCue.classList.toggle('show', !document.body.classList.contains('is-locked') && heroState !== 'playing' && heroState !== 'locked' && !atEnd && !onForm);
+function cueState() { nextCue.classList.toggle('show', !document.body.classList.contains('is-locked') && heroState !== 'playing' && heroState !== 'locked' && !atEnd);
   topCue.classList.toggle('show', atEnd && heroState !== 'playing'); }
 // at the end, an up arrow glides back through the invitation and replays the temple approach in reverse
 topCue.addEventListener('click', () => {
@@ -405,11 +398,11 @@ nextCue.addEventListener('click', () => {
 });
 
 // timeline thread draws as you read down it
-gsap.fromTo('.tl-thread i', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '.timeline', start: 'top 70%', end: 'bottom 60%', scrub: TOUCH || 0.6 } });
+gsap.fromTo('.tl-thread i', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '.timeline', start: 'top 70%', end: 'bottom 60%', scrub: 0.6 } });
 // curtains: the section holds still while they part, then the form scrolls up between them
 const drapeOpen = () => (innerWidth / innerHeight < 0.85 ? 94 : 82);
 const lamp = $('.lamp');
-gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: TOUCH ? '+=55%' : '+=95%', pin: true, anticipatePin: 1, scrub: TOUCH || 0.6, invalidateOnRefresh: true,
+gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: '+=95%', pin: true, anticipatePin: 1, scrub: 0.6, invalidateOnRefresh: true,
     onUpdate: s => lamp.classList.toggle('lit', s.progress > 0.62) } })
   .fromTo('.drape-l', { xPercent: () => (innerWidth / innerHeight < 0.6 ? -1 : -18) }, { xPercent: () => -drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
   .fromTo('.drape-r', { xPercent: () => (innerWidth / innerHeight < 0.6 ? 1 : 18) }, { xPercent: () => drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
@@ -458,7 +451,7 @@ if (!REDUCED) {
     } }); });
   const big = $('.kolam-big');
   if (big) { const st = prepDraw(big);
-    gsap.timeline({ scrollTrigger: { trigger: '#closing', start: 'top 85%', end: 'bottom bottom', scrub: TOUCH || 0.8 } })
+    gsap.timeline({ scrollTrigger: { trigger: '#closing', start: 'top 85%', end: 'bottom bottom', scrub: 0.8 } })
       .to(st, { strokeDashoffset: 0, ease: 'none', stagger: 0.15, duration: 1 })
       .to(big.querySelectorAll('circle.d'), { scale: 1, ease: 'back.out(3)', stagger: 0.01, duration: 0.3 }, 0.6); }
 }
@@ -573,14 +566,9 @@ function decorateTorana() {
 }
 if (window.ResizeObserver && $('.torana')) new ResizeObserver(() => decorateTorana()).observe($('.torana'));
 function layoutAll() { heroLayout(); finLayout(); decorateTorana(); }
-// phones fire resize whenever the address bar slides in or out; that only changes the height, so skip the relayout then
-let lastW = innerWidth;
-if (TOUCH) {
-  let st; const root = document.documentElement;
-  addEventListener('scroll', () => { if (!root.classList.contains('scrolling')) root.classList.add('scrolling'); clearTimeout(st); st = setTimeout(() => root.classList.remove('scrolling'), 220); }, { passive: true });
-}
+// while a guest is typing in the RSVP form, the phone keyboard resizes the window; relaying out then would pull the field out of focus
 const typing = () => { const a = document.activeElement; return !!a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); };
-let rz; addEventListener('resize', () => { if (typing() || (TOUCH && innerWidth === lastW)) return; lastW = innerWidth; clearTimeout(rz); rz = setTimeout(() => { if (typing()) return; layoutAll(); ScrollTrigger.refresh(); if (heroState === 'done' && lenis && lenis.scroll < inviteTop()) lenis.scrollTo(inviteTop(), { immediate: true, force: true }); else if (heroState === 'done' && !lenis && scrollY < inviteTop()) scrollTo(0, inviteTop()); }, 120); });
+let rz; addEventListener('resize', () => { if (typing()) return; clearTimeout(rz); rz = setTimeout(() => { if (typing()) return; layoutAll(); ScrollTrigger.refresh(); if (heroState === 'done' && lenis && lenis.scroll < inviteTop()) lenis.scrollTo(inviteTop(), { immediate: true, force: true }); }, 120); });
 layoutAll();
 addEventListener('load', () => { layoutAll(); ScrollTrigger.refresh(); });
 

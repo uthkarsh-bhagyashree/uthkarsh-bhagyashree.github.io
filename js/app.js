@@ -402,7 +402,8 @@ gsap.fromTo('.tl-thread i', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrig
 // curtains: the section holds still while they part, then the form scrolls up between them
 const drapeOpen = () => (innerWidth / innerHeight < 0.85 ? 94 : 82);
 const lamp = $('.lamp');
-gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: '+=95%', pin: true, anticipatePin: 1, scrub: 0.6, invalidateOnRefresh: true,
+// the browser itself holds the stage in place (CSS sticky), so the curtains can never drift off the screen on phones
+gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: () => '+=' + $('.rsvp-hold').offsetHeight, scrub: 0.6, invalidateOnRefresh: true,
     onUpdate: s => lamp.classList.toggle('lit', s.progress > 0.62) } })
   .fromTo('.drape-l', { xPercent: () => (innerWidth / innerHeight < 0.6 ? -1 : -18) }, { xPercent: () => -drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
   .fromTo('.drape-r', { xPercent: () => (innerWidth / innerHeight < 0.6 ? 1 : 18) }, { xPercent: () => drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
@@ -571,6 +572,7 @@ const typing = () => { const a = document.activeElement; return !!a && /^(INPUT|
 let rz; addEventListener('resize', () => { if (typing()) return; clearTimeout(rz); rz = setTimeout(() => { if (typing()) return; layoutAll(); ScrollTrigger.refresh(); if (heroState === 'done' && lenis && lenis.scroll < inviteTop()) lenis.scrollTo(inviteTop(), { immediate: true, force: true }); }, 120); });
 layoutAll();
 addEventListener('load', () => { layoutAll(); ScrollTrigger.refresh(); });
+if (window.ResizeObserver) { let rh = document.body.scrollHeight, rt; new ResizeObserver(() => { const h = document.body.scrollHeight; if (Math.abs(h - rh) < 2 || typing()) return; rh = h; clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.refresh(), 200); }).observe(document.body); }
 
 /* ---------------- Countdown ---------------- */
 const TARGET = Date.UTC(2026, 11, 28, 6, 54, 0); // 12:24 PM IST
@@ -692,6 +694,13 @@ $('#music').addEventListener('click', () => musicOn ? stopMusic() : startMusic()
 /* ---------------- Opening: the gatefold ---------------- */
 const intro = $('#intro');
 let opened = false;
+// decode the temple's big images while the cover waits for a tap, so phones don't stall decoding them mid-animation
+const warm = imgs => imgs.forEach(i => { try { i.decode && i.decode().catch(() => {}); } catch (e) {} });
+warm([...document.querySelectorAll('.stage')[0].querySelectorAll('img')]);
+addEventListener('load', () => { const rest = [...document.querySelectorAll('img')]; (window.requestIdleCallback || setTimeout)(() => warm(rest), 1500); });
+// on touch screens the lamp glows rest while a finger is scrolling, since they're repainted every frame
+if (matchMedia('(pointer: coarse)').matches) { const root = document.documentElement; let st;
+  addEventListener('scroll', () => { root.classList.add('scrolling'); clearTimeout(st); st = setTimeout(() => root.classList.remove('scrolling'), 220); }, { passive: true }); }
 function openInvite() {
   if (opened) return; opened = true; startMusic();
   const tl = gsap.timeline({ defaults: { ease: 'power3.inOut' }, onComplete: () => intro.remove() });

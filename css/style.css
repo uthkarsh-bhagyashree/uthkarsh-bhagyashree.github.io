@@ -127,6 +127,10 @@ html.lenis-stopped{overflow:hidden}
 .strew img{position:absolute;width:var(--s);rotate:var(--r)}
 .hero-shower{opacity:0}
 .stage.off *,.stage.off{animation-play-state:paused!important}
+/* a scene that is off screen stops drawing altogether, which frees the phone's graphics for the one on screen */
+.stage.off{visibility:hidden}
+.stage.off .cloud,.stage.off .fol,.stage.off .bird,.stage.off .petal{animation:none!important}
+html.scrolling .lamp.lit .lamp-on,html.scrolling .litlamp::before,html.scrolling .diya::before{animation:none!important}
 .w{display:inline-block;perspective:600px}
 .w>span{display:inline-block;transform-origin:50% 100%}
 .fol-l{left:0;transform-origin:0 100%}
@@ -649,3 +653,5 @@ body[data-lang=kn] .sp-sub{font-family:var(--kn);font-style:normal;font-size:cla
 .sp-hands{display:block;width:clamp(58px,5.6vw,74px);height:auto;margin:0 auto .1em;filter:drop-shadow(0 2px 2px rgba(74,20,10,.28)) drop-shadow(0 6px 8px rgba(74,20,10,.14))}
 /* the curtains catch taps while they cover the form, so touching them never focuses a hidden field */
 .drapes .silk,.drapes .drape{pointer-events:auto}
+.rsvp-stage{position:sticky;top:0}
+.rsvp-hold{height:95vh}

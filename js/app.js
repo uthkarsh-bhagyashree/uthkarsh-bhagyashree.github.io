@@ -365,7 +365,10 @@ let ty0 = null;
 addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
 addEventListener('touchmove', e => {
   if (heroState !== 'ready' && heroState !== 'playing') return;
-  e.preventDefault(); if (heroState === 'ready' && ty0 != null && ty0 - e.touches[0].clientY > 24) playHero(1);
+  e.preventDefault(); const up = ty0 != null && ty0 - e.touches[0].clientY > 24;
+  // a swipe plays the approach at the same pace a mouse wheel does on a laptop
+  if (heroState === 'ready' && up) { playHero(1); heroTw && heroTw.timeScale(2.4); }
+  else if (heroState === 'playing' && up && heroTw && heroTw.vars.p === 1) heroTw.timeScale(2.4);
 }, { passive: false });
 addEventListener('keydown', e => {
   if (heroState === 'ready' && ['ArrowDown', 'PageDown', ' ', 'Spacebar'].includes(e.key)) { e.preventDefault(); playHero(1); }
@@ -697,7 +700,6 @@ let opened = false;
 // decode the temple's big images while the cover waits for a tap, so phones don't stall decoding them mid-animation
 const warm = imgs => imgs.forEach(i => { try { i.decode && i.decode().catch(() => {}); } catch (e) {} });
 warm([...document.querySelectorAll('.stage')[0].querySelectorAll('img')]);
-addEventListener('load', () => { const rest = [...document.querySelectorAll('img')]; (window.requestIdleCallback || setTimeout)(() => warm(rest), 1500); });
 // on touch screens the lamp glows rest while a finger is scrolling, since they're repainted every frame
 if (matchMedia('(pointer: coarse)').matches) { const root = document.documentElement; let st;
   addEventListener('scroll', () => { root.classList.add('scrolling'); clearTimeout(st); st = setTimeout(() => root.classList.remove('scrolling'), 220); }, { passive: true }); }

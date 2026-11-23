@@ -332,7 +332,7 @@ body[data-lang=kn] .map-face span{font-family:var(--kn);letter-spacing:0;text-tr
 /* rsvp */
 #rsvp{position:relative;z-index:3;background:url(../assets/a50-butta-tile.webp) 0 0/96px 120px,radial-gradient(ellipse at 50% 30%,#8e1a2c 0%,#6a0f1e 50%,#3e0812 100%);padding:0 0 calc(max(24vw,200px) + 40px);color:var(--ivory)}
 #rsvp .edge{z-index:6}
-.drapes{position:sticky;top:0;height:100vh;height:100svh;margin-bottom:-100vh;margin-bottom:-100svh;z-index:5;pointer-events:none;overflow:hidden}
+.drapes{position:sticky;top:0;height:100vh;height:100lvh;margin-bottom:-100vh;margin-bottom:-100lvh;z-index:5;pointer-events:none;overflow:hidden}
 .valance{position:absolute;left:0;right:0;top:0;height:clamp(34px,4.2vw,56px);z-index:3;background:url(../assets/a32-border.webp) 0 50%/auto 100% repeat-x;box-shadow:0 8px 16px rgba(20,0,5,.45)}
 .valance::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;background:linear-gradient(90deg,var(--gold-d),var(--gold-l),var(--gold-d))}
 .silk{position:absolute;inset:0 0 auto 0;height:100%;z-index:1;will-change:transform;

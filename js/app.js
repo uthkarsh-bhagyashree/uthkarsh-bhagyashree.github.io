@@ -176,7 +176,7 @@ function heroLayout() {
   const glW = gh * 845 / 1400, grW = gh * 656 / 1400;
   const glX = tl + 0.17 * tw - glW, grX = tl + 0.70 * tw;
   const fH = 0.5 * th;
-  const CW = (portrait ? 1.9 : 1.75) * tw, CH = CW * 733 / 2600, GW = 1.2 * tw, GH = 0.36 * tw;
+  const CW = (portrait ? 1.9 : 1.75) * tw, CH = CW * 733 / 2600, GW = 1.2 * tw, GH = 0.13 * tw;
   G = { vw, vh, portrait, tw, th, tl, startTop, endTop, ground, dx, dyRel, dw, dh, cw, ch, cl, cTopRel, sw, sh, sl, gh, glW, grW, glX, grX, fH, GW, GH, CW, CH };
   H.cwall.style.width = CW + 'px';
   Object.assign(H.wband.style, { width: CW + 'px', height: 0.075 * tw + 'px' });
@@ -403,8 +403,8 @@ const drapeOpen = () => (innerWidth / innerHeight < 0.85 ? 94 : 82);
 const lamp = $('.lamp');
 gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: '+=95%', pin: true, anticipatePin: 1, scrub: 0.6, invalidateOnRefresh: true,
     onUpdate: s => lamp.classList.toggle('lit', s.progress > 0.62) } })
-  .fromTo('.drape-l', { xPercent: -18 }, { xPercent: () => -drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
-  .fromTo('.drape-r', { xPercent: 18 }, { xPercent: () => drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
+  .fromTo('.drape-l', { xPercent: () => (innerWidth / innerHeight < 0.6 ? -1 : -18) }, { xPercent: () => -drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
+  .fromTo('.drape-r', { xPercent: () => (innerWidth / innerHeight < 0.6 ? 1 : 18) }, { xPercent: () => drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
   .fromTo('.silk', { yPercent: 0 }, { yPercent: -102, ease: 'power2.in', duration: 0.8 }, 0.2)
   .to('.drapes', { autoAlpha: 0, duration: 0.12, ease: 'none' }, 1.0)
   .to({}, { duration: 0.06 });

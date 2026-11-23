@@ -610,7 +610,7 @@ body[data-lang=kn] .en-x{display:none!important}
 @media (prefers-reduced-motion:reduce){.t-deco .pbunch{animation:none}}
 
 @media (max-width:600px){.torana .invite-panel{padding-left:26px!important;padding-right:26px!important}}
-@media (max-width:600px){.countdown{width:min(420px,calc(100% + 6px))}.countdown{margin-left:calc((100% - min(420px,calc(100% + 6px))) / 2) !important}}
+@media (max-width:600px){.countdown{width:min(300px,84%)}.countdown{margin-left:calc((100% - min(300px,84%)) / 2) !important}}
 .countdown{container-type:inline-size}
 .countdown .cd-inner{inset:26% 25.5% !important}
 .countdown .cd-grid{gap:1.4cqw !important;margin-top:1.6cqw}
@@ -628,3 +628,5 @@ body[data-lang=kn] .en-x{display:none!important}
 .t-deco .bed{position:absolute;transform:rotate(var(--r,0deg));filter:drop-shadow(0 3px 3px rgba(50,15,8,.32)) drop-shadow(0 8px 12px rgba(50,15,8,.18))}
 .t-deco .bed.flip{transform:scaleX(-1)}
 @media (max-width:820px){.t-deco .bed{display:none}}
+
+@media (max-width:600px){.countdown .cd-inner{inset:25% 23.5% !important}.countdown .cd-grid b{font-size:clamp(13px,5.8cqw,34px) !important}.countdown .cd-grid span{font-size:clamp(6.5px,1.9cqw,11px) !important;letter-spacing:.03em}}

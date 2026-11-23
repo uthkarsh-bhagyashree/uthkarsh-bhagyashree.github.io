@@ -53,7 +53,7 @@ const KN = {
   thanks: 'ಧನ್ಯವಾದಗಳು, ತಮ್ಮ ಉತ್ತರ ನಮಗೆ ತಲುಪಿದೆ. ತಮ್ಮನ್ನು ಸ್ವಾಗತಿಸಲು ಕಾತುರರಾಗಿದ್ದೇವೆ.',
   wedWk: 'ಸೋಮವಾರ', recWk: 'ಬುಧವಾರ', monYear: 'ಡಿಸೆಂಬರ್ 2026', wedPlace: 'ಬಾಗಲಕೋಟೆ', recPlace: 'ಬೆಂಗಳೂರು',
   withLove: 'ಪ್ರೀತಿ ಹಾಗೂ ಆಶೀರ್ವಾದಗಳೊಂದಿಗೆ',
-  presence: '', families: 'ಆದ್ಯ ಹಾಗೂ ದೇಶಪಾಂಡೆ ಕುಟುಂಬಗಳ ಪರವಾಗಿ ಪ್ರೀತಿಯಿಂದ'
+  presence: '', families: 'ಆದ್ಯ ಹಾಗೂ ದೇಶಪಾಂಡೆ ಕುಟುಂಬಗಳ ಪರವಾಗಿ ಪ್ರೀತಿಯಿಂದ', familiesB: 'ದೇಶಪಾಂಡೆ ಹಾಗೂ ಆದ್ಯ ಕುಟುಂಬಗಳ ಪರವಾಗಿ ಪ್ರೀತಿಯಿಂದ'
 };
 const EN = {};
 $$('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (!(k in EN)) EN[k] = el.innerHTML; });
@@ -594,7 +594,7 @@ const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwwgMwxJlyid9wd-v
 function saveRSVP() {
   const fd = new FormData(form), data = new URLSearchParams({
     name: (fd.get('name') || '').trim(), guests: fd.get('guests') || '', wed: fd.get('wed') ? '1' : '0', rec: fd.get('rec') ? '1' : '0',
-    note: (fd.get('note') || '').trim(), lang: LANG, page: location.href.split('#')[0]
+    note: (fd.get('note') || '').trim(), lang: LANG, page: location.href.split('#')[0], site: document.title.split(' · ')[0]
   });
   try { localStorage.setItem('rsvp-last', JSON.stringify(Object.fromEntries(data))); } catch (e) {}
   if (!RSVP_ENDPOINT) return;

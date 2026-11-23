@@ -406,7 +406,7 @@ gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: '+=95%
     onUpdate: s => lamp.classList.toggle('lit', s.progress > 0.62) } })
   .fromTo('.drape-l', { xPercent: () => (innerWidth / innerHeight < 0.6 ? -1 : -18) }, { xPercent: () => -drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
   .fromTo('.drape-r', { xPercent: () => (innerWidth / innerHeight < 0.6 ? 1 : 18) }, { xPercent: () => drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
-  .fromTo('.silk-plaque', { xPercent: -50, yPercent: -50, scale: 0.94, y: 18 }, { xPercent: -50, yPercent: -50, scale: 1, y: 0, ease: 'power2.out', duration: 0.25 }, 0)
+  .fromTo('.silk-plaque', { scale: 0.94, y: 18 }, { scale: 1, y: 0, ease: 'power2.out', duration: 0.25 }, 0)
   .to('.silk-plaque', { y: () => -innerHeight * 1.05, ease: 'power2.in', duration: 0.8 }, 0.2)
   .fromTo('.silk', { yPercent: 0 }, { yPercent: -102, ease: 'power2.in', duration: 0.8 }, 0.2)
   .to('.drapes', { autoAlpha: 0, duration: 0.12, ease: 'none' }, 1.0)

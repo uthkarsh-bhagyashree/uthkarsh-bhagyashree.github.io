@@ -632,7 +632,8 @@ body[data-lang=kn] .en-x{display:none!important}
 @media (max-width:600px){.countdown .cd-inner{inset:25% 23.5% !important}.countdown .cd-grid b{font-size:clamp(13px,5.8cqw,34px) !important}.countdown .cd-grid span{font-size:clamp(6.5px,1.9cqw,11px) !important;letter-spacing:.03em}}
 
 /* a hanging card on the silk carries the reader from the celebrations into the RSVP */
-.silk-plaque{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;width:min(520px,74vw);padding:clamp(46px,6vh,62px) clamp(22px,3vw,40px) clamp(26px,3.6vh,36px);text-align:center;background:var(--paper);border-radius:10px;
+.sp-wrap{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.silk-plaque{position:relative;flex:none;width:min(520px,74vw);padding:clamp(46px,6vh,62px) clamp(22px,3vw,40px) clamp(26px,3.6vh,36px);text-align:center;background:var(--paper);border-radius:10px;
   box-shadow:inset 0 0 0 2px var(--gold),inset 0 0 0 7px #fff8e8,inset 0 0 0 8.5px var(--gold-l),0 18px 34px rgba(30,0,8,.45),0 4px 8px rgba(30,0,8,.3)}
 .silk-plaque .cord{position:absolute;bottom:100%;width:2px;height:60vh;background:linear-gradient(90deg,var(--gold-d),var(--gold-l),var(--gold-d));box-shadow:0 2px 4px rgba(30,0,8,.4)}
 .silk-plaque .cl{left:22%}.silk-plaque .cr{right:22%}
@@ -644,5 +645,5 @@ body[data-lang=kn] .en-x{display:none!important}
 body[data-lang=kn] .sp-eyebrow{font-family:var(--kn);letter-spacing:.04em;text-transform:none;font-size:clamp(13px,1.1vw,15px)}
 body[data-lang=kn] .sp-title{font-family:var(--kn);font-weight:600;font-size:clamp(22px,2.4vw,32px);line-height:1.5}
 body[data-lang=kn] .sp-sub{font-family:var(--kn);font-style:normal;font-size:clamp(14px,1.2vw,16px)}
-@media (max-width:600px){.silk-plaque{width:86vw;top:31%}.sp-sub{font-size:14.5px}}
+@media (max-width:600px){.sp-wrap{align-items:flex-start;padding-top:max(150px,19vh)}.silk-plaque{width:86vw}.sp-sub{font-size:14.5px}}
 .sp-hands{display:block;width:clamp(58px,5.6vw,74px);height:auto;margin:0 auto .1em;filter:drop-shadow(0 2px 2px rgba(74,20,10,.28)) drop-shadow(0 6px 8px rgba(74,20,10,.14))}

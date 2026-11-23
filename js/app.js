@@ -25,9 +25,9 @@ const KN = {
   scroll: 'ಮುಂದೆ ಸಾಗಿ',
   shubham: 'ಎಲ್ಲವೂ ಶುಭವಾಗಲಿ',
   lead: 'ಗುರು-ಹಿರಿಯರ ಆಶೀರ್ವಾದದೊಂದಿಗೆ, ತಮ್ಮನ್ನು ಸಕುಟುಂಬ ಸಮೇತರಾಗಿ ಈ ಶುಭ ವಿವಾಹಕ್ಕೆ ಪ್ರೀತಿಯಿಂದ ಆಹ್ವಾನಿಸುತ್ತೇವೆ',
-  groom: 'ಉತ್ಕರ್ಷ', groomDesc: 'ಶ್ರೀಮತಿ ಶ್ರೇಯಾ (ಸಂಧ್ಯಾ) ಹಾಗೂ ಶ್ರೀ ಕೇಶವ ವ. ಆದ್ಯ ಇವರ ಪುತ್ರ',
+  groom: 'ಉತ್ಕರ್ಷ',
   weds: 'ಮತ್ತು',
-  bride: 'ಭಾಗ್ಯಶ್ರೀ', brideDesc: 'ಶ್ರೀಮತಿ ಅರ್ಚನಾ ಹಾಗೂ ಶ್ರೀ ಗುರುರಾಜರಾವ್ ಆರ್. ದೇಶಪಾಂಡೆ ಇವರ ಪುತ್ರಿ',
+  bride: 'ಭಾಗ್ಯಶ್ರೀ',
   mLabel: 'ಶುಭ ಮುಹೂರ್ತ', mDate: 'ಸೋಮವಾರ, 28 ಡಿಸೆಂಬರ್ 2026', mTime: 'ಮಧ್ಯಾಹ್ನ 12:24 · ಅಭಿಜಿತ್ ಲಗ್ನ',
   mWhere: 'ಎನ್. ಸಿ. ಅಥಣಿ ಕಲ್ಯಾಣ ಮಂಟಪ, ವಿದ್ಯಾಗಿರಿ, ಬಾಗಲಕೋಟೆ',
   close: 'ತಮ್ಮ ಆಗಮನ ಹಾಗೂ ಆಶೀರ್ವಾದ ನಮ್ಮ ಸಂಭ್ರಮವನ್ನು ಪೂರ್ಣಗೊಳಿಸುತ್ತದೆ.',
@@ -45,6 +45,7 @@ const KN = {
   vTagWed: 'ವಿವಾಹ · ಸೋಮ 28 ಡಿಸೆಂಬರ್', vNameWed: 'ಎನ್. ಸಿ. ಅಥಣಿ ಕಲ್ಯಾಣ ಮಂಟಪ', vAddrWed: 'ವಿದ್ಯಾಗಿರಿ, ಬಾಗಲಕೋಟೆ, ಕರ್ನಾಟಕ 587103',
   vTagRec: 'ಆರತಕ್ಷತೆ · ಬುಧ 30 ಡಿಸೆಂಬರ್', vNameRec: 'ಪೈ ವಿಸ್ಟಾ ಕನ್ವೆನ್ಷನ್ ಹಾಲ್', vAddrRec: 'ಸೌತ್ ಎಂಡ್ ಸರ್ಕಲ್, ಬಸವನಗುಡಿ, ಬೆಂಗಳೂರು',
   openMaps: 'ಗೂಗಲ್ ನಕ್ಷೆಯಲ್ಲಿ ತೆರೆಯಿರಿ', copyAddr: 'ವಿಳಾಸ ನಕಲಿಸಿ', mapTap: 'ನಕ್ಷೆ ತೆರೆಯಲು ಸ್ಪರ್ಶಿಸಿ',
+  spTitle: 'ತಮಗಾಗಿ ನಮ್ಮ ಮನೆಯ ಬಾಗಿಲು ತೆರೆದಿದೆ', spSub: 'ಪರದೆ ಸರಿಸಿ, ತಾವು ಬರುವಿರೋ ಎಂದು ತಿಳಿಸಿ',
   rsvpTitle: 'ತಮ್ಮ ಆಗಮನವನ್ನು ತಿಳಿಸಿ', rsvpSub: 'ತಾವು ಬರುವಿರೋ ಎಂದು ದಯವಿಟ್ಟು ತಿಳಿಸಿ',
   fName: 'ತಮ್ಮ ಹೆಸರು', fGuests: 'ತಮ್ಮನ್ನೂ ಸೇರಿ ಅತಿಥಿಗಳ ಸಂಖ್ಯೆ', fAttend: 'ನಾನು ಭಾಗವಹಿಸುವುದು',
   optWed: 'ವಿವಾಹ · 28 ಡಿಸೆಂಬರ್, ಬಾಗಲಕೋಟೆ', optRec: 'ಆರತಕ್ಷತೆ · 30 ಡಿಸೆಂಬರ್, ಬೆಂಗಳೂರು',
@@ -405,6 +406,8 @@ gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: '+=95%
     onUpdate: s => lamp.classList.toggle('lit', s.progress > 0.62) } })
   .fromTo('.drape-l', { xPercent: () => (innerWidth / innerHeight < 0.6 ? -1 : -18) }, { xPercent: () => -drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
   .fromTo('.drape-r', { xPercent: () => (innerWidth / innerHeight < 0.6 ? 1 : 18) }, { xPercent: () => drapeOpen(), ease: 'power2.inOut', duration: 1 }, 0.05)
+  .fromTo('.silk-plaque', { xPercent: -50, yPercent: -50, scale: 0.94, y: 18 }, { xPercent: -50, yPercent: -50, scale: 1, y: 0, ease: 'power2.out', duration: 0.25 }, 0)
+  .to('.silk-plaque', { y: () => -innerHeight * 1.05, ease: 'power2.in', duration: 0.8 }, 0.2)
   .fromTo('.silk', { yPercent: 0 }, { yPercent: -102, ease: 'power2.in', duration: 0.8 }, 0.2)
   .to('.drapes', { autoAlpha: 0, duration: 0.12, ease: 'none' }, 1.0)
   .to({}, { duration: 0.06 });

@@ -127,8 +127,6 @@ html.lenis-stopped{overflow:hidden}
 .strew img{position:absolute;width:var(--s);rotate:var(--r)}
 .hero-shower{opacity:0}
 .stage.off *,.stage.off{animation-play-state:paused!important}
-/* a scene that is off screen stops drawing altogether, which frees the phone's graphics for the one on screen */
-.stage.off{visibility:hidden}
 .stage.off .cloud,.stage.off .fol,.stage.off .bird,.stage.off .petal{animation:none!important}
 html.scrolling .lamp.lit .lamp-on,html.scrolling .litlamp::before,html.scrolling .diya::before{animation:none!important}
 .w{display:inline-block;perspective:600px}
@@ -394,7 +392,7 @@ body[data-lang=kn] .pv-label{font-family:var(--kn);letter-spacing:0;text-transfo
 .f-skyline{opacity:.9}
 .f-tank{filter:drop-shadow(0 -8px 16px rgba(30,30,40,.22))}
 .f-couple{filter:drop-shadow(0 10px 22px rgba(30,10,10,.35))}
-.f-text{left:max(5vw,28px);top:calc(max(24vw,200px) * .32 + max(4vh,24px));opacity:0}
+.f-text{left:max(5vw,28px);top:calc(max(24vw,200px) * .32 + max(4vh,24px));opacity:0;will-change:transform,opacity,clip-path;contain:paint}
 .ribbon{position:relative;text-align:left;padding:clamp(18px,2.4vw,28px) clamp(30px,4.4vw,60px);background:var(--paper);border-radius:4px;box-shadow:var(--lift2);max-width:92vw}
 .ribbon::after{content:"";position:absolute;inset:7px;border:1.5px solid var(--gold);border-radius:2px;pointer-events:none}
 .f-kn{font-size:clamp(26px,2.8vw,40px);color:var(--maroon)}
@@ -613,7 +611,7 @@ body[data-lang=kn] .en-x{display:none!important}
 @keyframes bunch{from{transform:rotate(-1.2deg)}to{transform:rotate(1.2deg)}}
 @media (prefers-reduced-motion:reduce){.t-deco .pbunch{animation:none}}
 
-@media (max-width:600px){.torana .invite-panel{padding-left:26px!important;padding-right:26px!important}}
+@media (max-width:600px){.torana .invite-panel{padding-left:38px!important;padding-right:38px!important}.torana .invite-panel .lead{padding:0 10px}}
 @media (max-width:600px){.countdown{width:min(300px,84%)}.countdown{margin-left:calc((100% - min(300px,84%)) / 2) !important}}
 .countdown{container-type:inline-size}
 .countdown .cd-inner{inset:26% 25.5% !important}
@@ -655,3 +653,8 @@ body[data-lang=kn] .sp-sub{font-family:var(--kn);font-style:normal;font-size:cla
 .drapes .silk,.drapes .drape{pointer-events:auto}
 .rsvp-stage{position:sticky;top:0}
 .rsvp-hold{height:95vh}
+/* in English the greeting above the names is set in the small capitals used for labels */
+body:not([data-lang=kn]) .names-kn{font-family:var(--caps);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:clamp(13px,1.25vw,17px)}
+/* only the hanging pieces swing; flowers, heaps and plants stay put */
+.t-deco .tban,.t-deco .theap,.t-deco .pflower,.t-deco .bed{animation:none}
+.t-deco .jstr,.t-deco .hl,.t-deco .crown-fest{backface-visibility:hidden}

@@ -34,12 +34,12 @@ const KN = {
   cdLabel: 'ಶುಭ ಮುಹೂರ್ತಕ್ಕೆ', days: 'ದಿನ', hours: 'ಗಂಟೆ', mins: 'ನಿಮಿಷ', secs: 'ಸೆಕೆಂಡು',
   celTitle: 'ಶುಭ ಕಾರ್ಯಕ್ರಮಗಳು', celSub: 'ಎರಡು ದಿನ · ಎರಡು ಊರು',
   wedTitle: 'ವಿವಾಹ', wedDate: 'ಸೋಮವಾರ · 28 ಡಿಸೆಂಬರ್ 2026',
-  wedTime: 'ಮಧ್ಯಾಹ್ನ 12:24', wedWhat: 'ಅಭಿಜಿತ್ ಲಗ್ನದಲ್ಲಿ ಅಕ್ಷತಾರೋಪಣ ಹಾಗೂ ಮಾಂಗಲ್ಯಧಾರಣ',
-  wedFeastWhen: 'ನಂತರ', wedFeast: 'ವಿವಾಹ ಭೋಜನ',
+  wedTime: 'ಮಧ್ಯಾಹ್ನ 12:24', wedWhat: 'ಅಭಿಜಿತ್ ಲಗ್ನದಲ್ಲಿ ಮುಹೂರ್ತ, ಮಾಂಗಲ್ಯಧಾರಣ ಹಾಗೂ ಅಕ್ಷತಾರೋಪಣ',
+  wedFeastWhen: 'ಬಳಿಕ', wedFeast: 'ಮದುವೆಯ ಭೋಜನ',
   wedVenue: 'ಎನ್. ಸಿ. ಅಥಣಿ ಕಲ್ಯಾಣ ಮಂಟಪ', wedCity: 'ವಿದ್ಯಾಗಿರಿ, ಬಾಗಲಕೋಟೆ',
   addCal: 'ಕ್ಯಾಲೆಂಡರ್‌ಗೆ ಸೇರಿಸಿ', viewMap: 'ದಾರಿ',
   recTitle: 'ಆರತಕ್ಷತೆ', recDate: 'ಬುಧವಾರ · 30 ಡಿಸೆಂಬರ್ 2026',
-  recTime: 'ಸಂಜೆ 6 – ರಾತ್ರಿ 10', recWhat: 'ವಧು-ವರರ ಆರತಕ್ಷತೆ',
+  recTime: 'ಸಂಜೆ 6 – ರಾತ್ರಿ 10', recWhat: 'ಆರತಕ್ಷತೆ', shubha: 'ಶುಭ ವಿವಾಹ',
   recVenue: 'ಪೈ ವಿಸ್ಟಾ ಕನ್ವೆನ್ಷನ್ ಹಾಲ್', recCity: 'ಸೌತ್ ಎಂಡ್ ಸರ್ಕಲ್, ಬಸವನಗುಡಿ, ಬೆಂಗಳೂರು',
   venTitle: 'ಕಾರ್ಯಕ್ರಮದ ಸ್ಥಳಗಳು',
   vTagWed: 'ವಿವಾಹ · ಸೋಮ 28 ಡಿಸೆಂಬರ್', vNameWed: 'ಎನ್. ಸಿ. ಅಥಣಿ ಕಲ್ಯಾಣ ಮಂಟಪ', vAddrWed: 'ವಿದ್ಯಾಗಿರಿ, ಬಾಗಲಕೋಟೆ, ಕರ್ನಾಟಕ 587103',
@@ -193,7 +193,7 @@ function heroLayout() {
   Object.assign(H.mist.style, { width: Math.max(vw * 1.5, tw * 2.4) + 'px', height: 0.2 * th + 'px' });
   Object.assign(H.glow.style, { width: dw * 2 + 'px', height: dh * 1.25 + 'px' });
   // floral side panels hang from above the screen, so the jasmine strings read as garlands
-  const fh = (portrait ? 0.72 : 1.04) * vh, flw = fh * 634 / 1485, frw = fh * 651 / 1485, out = portrait ? 0.62 : 0.24;
+  const fh = (portrait ? 0.72 : 1.04) * vh, flw = fh * 634 / 1485, frw = fh * 651 / 1485, out = portrait ? (vw >= 700 ? 0.72 : 0.62) : 0.24 + Math.max(0, 1.6 - vw / vh) * 0.6;   // squarer tablet screens push the florals further out
   // the hero copies carry the jasmine strands 420px further up, so they always run off the top of the screen
   const fhx = fh * 1905 / 1485; H.folL.style.height = fhx + 'px'; H.folR.style.height = fhx + 'px';
   H.folL.style.marginLeft = -out * flw + 'px'; H.folR.style.marginRight = -out * frw + 'px';
@@ -314,7 +314,6 @@ function finRender(p) {
   lay(F.contact, vw * 0.5 - g.cw * 0.75, feet - parseFloat(F.contact.style.height) * 0.6, 1);
   lay(F.couple, vw * 0.5 - g.cw / 2, feet - g.ch, 1);            // standing on the lowest step
   lay(F.flL, 0, vh - g.fh + 6, 1.15); lay(F.flR, vw - g.frw, vh - g.fh + 6, 1.15);
-  const u = smooth(seg(p, 0.28, 0.78)); op(F.text, u > 0 ? 1 : 0); F.text.style.clipPath = `inset(0 0 ${(1 - u) * 100}% 0)`; tf(F.text, `translateY(${(1 - u) * 16}px)`);
 }
 finRender(0);
 
@@ -416,11 +415,20 @@ gsap.timeline({ scrollTrigger: { trigger: '#rsvp', start: 'top top', end: () => 
   .to('.drapes', { autoAlpha: 0, duration: 0.12, ease: 'none' }, 1.0)
   .to({}, { duration: 0.06 });
 ScrollTrigger.create({ start: 0, end: 'max', onUpdate: s => gsap.set('.progress i', { scaleX: s.progress }) });
+// the names card unrolls on its own clock (1.2s into the scene, over 2.1s), run by the browser itself so phones keep laptop pace
+function revealCard() {
+  const t = F.text, d = REDUCED ? 1 : 1176, dur = REDUCED ? 1 : 2100;
+  const from = { opacity: 1, clipPath: 'inset(0 0 100% 0)', transform: 'translateY(16px)' }, to = { opacity: 1, clipPath: 'inset(0 0 0% 0)', transform: 'translateY(0)' };
+  if (t.animate) t.animate([from, to], { duration: dur, delay: d, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'both' });
+  else setTimeout(() => Object.assign(t.style, to), d);
+}
 // finale plays once, when most of it is on screen
 let finPlayed = false;
 new IntersectionObserver((es, ob) => es.forEach(e => {
-  if (e.intersectionRatio > 0.55 && !finPlayed) { finPlayed = true; ob.disconnect(); const o = { p: 0 }; gsap.to(o, { p: 1, duration: REDUCED ? 0.01 : 4.2, ease: 'none', onUpdate: () => finRender(o.p) }); }
+  if (e.intersectionRatio > 0.55 && !finPlayed) { finPlayed = true; ob.disconnect(); const o = { p: 0 }; gsap.to(o, { p: 1, duration: REDUCED ? 0.01 : 4.2, ease: 'none', onUpdate: () => finRender(o.p) }); revealCard(); }
 }), { threshold: [0, 0.55, 0.8] }).observe(fin);
+// get the closing scene's pictures ready while guests are still at the RSVP, so it opens without a stall on phones
+new IntersectionObserver((es, ob) => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); warm([...fin.querySelectorAll('img')]); } }, { rootMargin: '100% 0px' }).observe($('#rsvp'));
 
 function akshata(el) {
   const box = el.querySelector('.akshata'); if (!box) return; const w = box.offsetWidth, h = box.offsetHeight;
@@ -510,8 +518,12 @@ $$('svg[data-illus]').forEach(svg => {
 });
 
 
+let torSize = '';
 function decorateTorana() {
-  const t = $('.torana'), d = $('.t-deco'); if (!t || !d) return; const W = t.offsetWidth, Ht = t.offsetHeight; d.innerHTML = '';
+  const t = $('.torana'), d = $('.t-deco'); if (!t || !d) return; const W = t.offsetWidth, Ht = t.offsetHeight;
+  // rebuilding swaps every image, which flickers, so only rebuild when the arch has really changed size
+  const key = W + 'x' + Math.round(Ht / 24) + 'x' + (innerWidth <= 600 ? 's' : innerWidth <= 820 ? 'm' : 'l'); if (key === torSize && d.childElementCount) return; torSize = key;
+  d.innerHTML = '';
   // brass lamps hang on chains from the inner corners of the crown
   const lh = Math.min(0.21 * W, 250), lw = lh * 228 / 632;
   [[0.232, 0], [0.768, 1]].forEach(([x, i]) => { const el = document.createElement('div'); el.className = 'hl';
@@ -568,7 +580,7 @@ function decorateTorana() {
     [[0.07, 0.074, 0], [0.152, 0.06, 0.004], [0.228, 0.05, 0.006]].forEach(([x, w, dy]) => put('a39-lotus', X(x), w * W, 184 / 234, 'front', 0, dy));
   });
 }
-if (window.ResizeObserver && $('.torana')) new ResizeObserver(() => decorateTorana()).observe($('.torana'));
+if (window.ResizeObserver && $('.torana')) { let tr; new ResizeObserver(() => { cancelAnimationFrame(tr); tr = requestAnimationFrame(decorateTorana); }).observe($('.torana')); }
 function layoutAll() { heroLayout(); finLayout(); decorateTorana(); }
 // while a guest is typing in the RSVP form, the phone keyboard resizes the window; relaying out then would pull the field out of focus
 const typing = () => { const a = document.activeElement; return !!a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); };

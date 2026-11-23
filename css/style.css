@@ -127,6 +127,10 @@ html.lenis-stopped{overflow:hidden}
 .strew img{position:absolute;width:var(--s);rotate:var(--r)}
 .hero-shower{opacity:0}
 .stage.off *,.stage.off{animation-play-state:paused!important}
+/* off-screen scenes drop their loops entirely: even paused, they keep costing phones frames while scrolling */
+.stage.off .cloud,.stage.off .fol,.stage.off .bird,.stage.off .petal,.stage.off .scroll-cue i{animation:none!important}
+/* phones: the lamp glows are repainted every frame, so they rest while a finger is scrolling */
+html.scrolling .lamp.lit .lamp-on,html.scrolling .litlamp::before,html.scrolling .diya::before,html.scrolling .t-deco .hl i{animation:none!important}
 .w{display:inline-block;perspective:600px}
 .w>span{display:inline-block;transform-origin:50% 100%}
 .fol-l{left:0;transform-origin:0 100%}

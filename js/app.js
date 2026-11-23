@@ -320,6 +320,8 @@ finRender(0);
 
 /* ================= Scroll plumbing ================= */
 gsap.registerPlugin(ScrollTrigger);
+// resizes are handled by our own listener below, so the on-screen keyboard opening can't rebuild the pinned RSVP and steal focus
+ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
 let lenis = null;
 if (window.Lenis) {
   lenis = new Lenis({ smoothWheel: false, syncTouch: false });
@@ -343,7 +345,7 @@ function playHero(dir) {
     onUpdate: () => heroRender(o.p),
     onComplete: () => {
       if (dir > 0) {
-        heroState = 'done';
+        heroState = 'done'; arrivedAt = performance.now();
         cacheTop(); if (lenis) { lenis.start(); lenis.scrollTo(INV_TOP, { immediate: true, force: true }); } else scrollTo(0, INV_TOP); lastY = INV_TOP;
         arrive();
       } else heroState = 'ready';
@@ -372,7 +374,9 @@ addEventListener('keydown', e => {
 });
 // scrolling back above the invitation replays the approach in reverse
 let lastY = 0;
-addEventListener('scroll', () => { const y = scrollY; if (heroState === 'done' && y < lastY && y < INV_TOP - 2) playHero(-1); lastY = y; }, { passive: true });
+// on phones, a finger bounce or the address bar reappearing nudges scrollY a few pixels; only a deliberate pull upward rewinds
+let arrivedAt = 0;
+addEventListener('scroll', () => { const y = scrollY; if (heroState === 'done' && performance.now() - arrivedAt > 900 && y < lastY && y < INV_TOP - 48) playHero(-1); lastY = y; }, { passive: true });
 H.cue && H.cue.addEventListener('click', () => heroState === 'ready' && playHero(1));
 // a down arrow stays on screen until the very end of the invitation
 const nextCue = $('.next-cue'), closingEnd = $('.foot') || $('#closing');
@@ -566,7 +570,15 @@ function decorateTorana() {
 }
 if (window.ResizeObserver && $('.torana')) new ResizeObserver(() => decorateTorana()).observe($('.torana'));
 function layoutAll() { heroLayout(); finLayout(); decorateTorana(); }
-let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { layoutAll(); ScrollTrigger.refresh(); if (heroState === 'done' && lenis && lenis.scroll < inviteTop()) lenis.scrollTo(inviteTop(), { immediate: true, force: true }); }, 120); });
+// phones fire resize whenever the address bar slides in or out; that only changes the height, so skip the relayout then
+const TOUCH = matchMedia('(pointer: coarse)').matches;
+let lastW = innerWidth;
+if (TOUCH) {
+  let st; const root = document.documentElement;
+  addEventListener('scroll', () => { if (!root.classList.contains('scrolling')) root.classList.add('scrolling'); clearTimeout(st); st = setTimeout(() => root.classList.remove('scrolling'), 220); }, { passive: true });
+}
+const typing = () => { const a = document.activeElement; return !!a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); };
+let rz; addEventListener('resize', () => { if (typing() || (TOUCH && innerWidth === lastW)) return; lastW = innerWidth; clearTimeout(rz); rz = setTimeout(() => { if (typing()) return; layoutAll(); ScrollTrigger.refresh(); if (heroState === 'done' && lenis && lenis.scroll < inviteTop()) lenis.scrollTo(inviteTop(), { immediate: true, force: true }); }, 120); });
 layoutAll();
 addEventListener('load', () => { layoutAll(); ScrollTrigger.refresh(); });
 
